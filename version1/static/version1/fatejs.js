@@ -1,28 +1,32 @@
 /*
- This script constructs a few random queries and search results and provides
- a method for replacing the content in the three content containers.
-*/
+ * For the purposes of this script, 'first' will always refer to the data displayed on
+ * the left side of the screen.
+ */ 
+ 
+// contain the HTML IDs of the titles
+var firstTitleIDs = [];
+var secondTitleIDs = [];
 
-// contains the HTML IDs of the titles
-var titleIDs = [];
-// contains the HTML IDs of the snippets
-var snippetIDs = [];
+// contain the HTML IDs of the snippets
+var firstSnippetIDs = [];
+var secondSnippetIDs = [];
+
 // the qid we are currently testing
 var currQid = 1;
 
-//
+// see uploadData()
 var firstRankList = null;
 var secondRankList = null;
 
-// builds lists of titles, snippets, titleIDs, and snippetIDs
-for (i = 97; i <= 98; i++) {
-	for (j = 1; j <= 5; j++) {
-		// the following two lines of code are what would stay once we are dealing
-		// with actual search results
-		titleIDs.push(String.fromCharCode(i).concat("t".concat(j)));
-		snippetIDs.push(String.fromCharCode(i).concat("d".concat(j)));
-	}
-}	
+// builds lists of titleIDs and snippetIDs
+for (j = 1; j <= 5; j++) {
+	firstTitleIDs.push("at".concat(j));
+	secondTitleIDs.push("bt".concat(j));
+	firstSnippetIDs.push("ad".concat(j));
+	secondSnippetIDs.push("bd".concat(j));
+}
+
+
 /*
 input snippet data will be in the format:
     {
@@ -33,33 +37,32 @@ input snippet data will be in the format:
 for each qid, snippet1 corresponds to the first snippet in the reranked list
 */
 function uploadData(firstJSON, secondJSON) {
-	console.log("entered uploadData");
-	var fj = firstJSON.replace(/&quot;/g, '"');
-	fj = fj.replace(/&#39;/g, "'");
-	console.log(fj);
-	var sj = secondJSON.replace(/&quot;/g, '"');
-	sj = sj.replace(/&#39;/g, "'");
+	console.log("uploadData");
+	
+	// cleans up the JSON data, which gets a little corrupted when passed through
+	// the html from django
+	firstJSON = firstJSON.replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+	secondJSON = secondJSON.replace(/&quot;/g, '"').replace(/&#39;/g, "'");
 
-	console.log(fj.charAt(4343));
-	firstRankList = JSON.parse(fj);
-	secondRankList = JSON.parse(sj);
+	firstRankList = JSON.parse(firstJSON);
+	secondRankList = JSON.parse(secondJSON);
 }
 
-// randomly selects and displays a new query along with random search result titles
+// selects and displays the next query along with corresponding search result titles
 // and snippets
 function nextQuery() {
 	var snipData = firstRankList[currQid];
 	document.getElementById("qstring").innerHTML = "Query: " + snipData[0][0];
 	
 	for (i = 0; i < snipData.length; i++) {
-		document.getElementById(titleIDs[i]).innerHTML = snipData[i][1];
-		document.getElementById(snippetIDs[i]).innerHTML = snipData[i][3];
+		document.getElementById(firstTitleIDs[i]).innerHTML = snipData[i][1];
+		document.getElementById(firstSnippetIDs[i]).innerHTML = snipData[i][3];
 	}
 	
 	snipData = secondRankList[currQid];
 	for (i = 0; i < snipData.length; i++) {
-		document.getElementById(titleIDs[i + 5]).innerHTML = snipData[i][1];
-		document.getElementById(snippetIDs[i + 5]).innerHTML = snipData[i][3];
+		document.getElementById(secondTitleIDs[i]).innerHTML = snipData[i][1];
+		document.getElementById(secondSnippetIDs[i]).innerHTML = snipData[i][3];
 	}
 	currQid++;
 }
