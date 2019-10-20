@@ -11,8 +11,9 @@ var secondTitleIDs = [];
 var firstSnippetIDs = [];
 var secondSnippetIDs = [];
 
+var unseenQids = [];
 // the qid we are currently testing
-var currQid = 1;
+var currQid = -1;
 
 // see uploadData()
 var firstRankList = null;
@@ -26,7 +27,18 @@ for (j = 1; j <= 5; j++) {
 	secondSnippetIDs.push("bd".concat(j));
 }
 
+function updateRandomQid() {
+	if (unseenQids.length != 0) {
+		var index = Math.floor(Math.random() * unseenQids.length);
+		currQid = unseenQids.splice(index, 1)[0];
+	}
+}
 
+function updateNextQid() {
+	if (unseenQids.length != 0) {
+		currQid = unseenQids.splice(0, 1)[0];
+	}
+}
 /*
 input snippet data will be in the format:
     {
@@ -46,6 +58,15 @@ function uploadData(firstJSON, secondJSON) {
 
 	firstRankList = JSON.parse(firstJSON);
 	secondRankList = JSON.parse(secondJSON);
+	
+	for (qid in firstRankList) {
+		if (!(qid in secondRankList)) {
+			console.log("QID MISMATCH");
+		}
+		unseenQids.push(qid);
+	}
+	//updateRandomQid();
+	updateNextQid();
 }
 
 // selects and displays the next query along with corresponding search result titles
@@ -64,5 +85,5 @@ function nextQuery() {
 		document.getElementById(secondTitleIDs[i]).innerHTML = snipData[i][1];
 		document.getElementById(secondSnippetIDs[i]).innerHTML = snipData[i][3];
 	}
-	currQid++;
+	updateNextQid();
 }

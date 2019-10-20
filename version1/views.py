@@ -4,7 +4,7 @@ import json
 from version1.extraction import *
 
 # gets relevant data from snippet.pickle file
-first_rank = extractFromFile("0g.txt", 5)
+first_rank = extractFromFile("t.txt", 5)
 second_rank = extractFromFile("rp.txt", 5)
 # stores data as json so that it can be passed to Javascript
 first = json.dumps(first_rank)

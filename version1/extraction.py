@@ -37,36 +37,37 @@ returns snippet data in the format:
 
 for each qid, snippet1 corresponds to the first snippet in the reranked list
 """
+# query 82 is nonexistent
 def extractFromFile(fileName, numSnippets):
-    file = open(r"./version1/txtdata/version1/" + fileName, "r")
+    file = open("./version1/txtdata/version1/" + fileName, "r")
     lines = file.readlines()
     file.close()
     
-    with open(r"./version1/snippet.pickle", 'rb') as fr:
+    with open("./version1/snippet.pickle", 'rb') as fr:
         query_snippet_list = pickle.load(fr)
         
     results = {}
-    for i in range(100):
-        qid = i + 1
-        results[qid] = []
+    lineNum = 0
     
-    j = 0
-    while j < len(lines):
-        # since qids are in groups of 10 in ascending order, this will work
-        query_snippet = query_snippet_list[int(j / 10)]
-        snippet_list = query_snippet.snippetList
+    # there are 10 results for a given query, but we only want to
+    # inspect a certain number
+    
+    # the number of snippets added to the current qid in results
+    snippetsAdded = 0
+    currQid = -1
+    for line in lines:
+        tokens = line.split(' ')
+        qAndR = splitByDoubleZeros(tokens[2])
+        qid = int(qAndR[0])
         
-        # there are 10 results for a given query, but we only want to
-        # inspect a certain number
-        for k in range(numSnippets):
-            line = lines[j + k]
-            tokens = line.split(' ')
-            qAndR = splitByDoubleZeros(tokens[2])
-            qid = int(qAndR[0])
+        if currQid != qid:
+            currQid = qid
+            snippetsAdded = 0
+            results[currQid] = []
+           
+        if snippetsAdded < numSnippets:
             ogRank = int(qAndR[1])
             newRank = int(tokens[3]) # corresponds to RANK
-            if (newRank != k + 1):
-                print("RANK does not correspond with the snippets position in the output list.")
             
             query_snippet = query_snippet_list[qid - 1]
             snippet_list = query_snippet.snippetList            
@@ -75,16 +76,16 @@ def extractFromFile(fileName, numSnippets):
             
             if ogRank != int(currSnippet.get_rank()):
                 print("Current Snippet's original rank is unequal to the 'r' field in the .txt file.")
+                
             # [query_name, title, url, description]
             # replaces double quotes with single quotes to avoid messing up JSON
             results[qid].append([query_snippet.query.replace('"', "'"), currSnippet.get_title().replace('"', "'"), 
                                 currSnippet.get_url().replace('"', "'"), currSnippet.get_desc().replace('"', "'")])
-        
-        j += 10
+                                
+            snippetsAdded += 1
+            
     
     return results
-  
-
 
     
     
