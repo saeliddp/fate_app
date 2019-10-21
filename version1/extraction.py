@@ -47,7 +47,6 @@ def extractFromFile(fileName, numSnippets):
         query_snippet_list = pickle.load(fr)
         
     results = {}
-    lineNum = 0
     
     # there are 10 results for a given query, but we only want to
     # inspect a certain number
@@ -60,6 +59,9 @@ def extractFromFile(fileName, numSnippets):
         qAndR = splitByDoubleZeros(tokens[2])
         qid = int(qAndR[0])
         
+        # once a new qid is reached, set currQid equal to it,
+        # set snippetsAdded equal to zero, and add an empty list at
+        # results[currQid]
         if currQid != qid:
             currQid = qid
             snippetsAdded = 0
