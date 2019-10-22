@@ -13,7 +13,6 @@
       color: #63aba8;
       font-family: "verdana";
     }
-
     .timer {
       float: center;
       padding-top: 10px;
@@ -25,7 +24,6 @@
       margin-top: 0px;
       padding-top: 0px;
     }
-
     .column {
       width: 47%;
       margin: 5px;
@@ -33,15 +31,12 @@
       border-radius: 4px;
       border: 1px solid #ccc;
     }
-
     .columnl {
       float: left;
     }
-
     .columnr {
       float: right;
     }
-
     .row:after {
       content: "";
       display: table;
@@ -49,7 +44,6 @@
       border: 1px solid #ccc;
       border-radius: 4px;
     }
-
     .main_divs {
       border-radius: 5px;
       background-color: #f2f2f2;
@@ -67,7 +61,6 @@
       font-family: "verdana";
       color: #565656;
     }
-
     .result {
       overflow: hidden;
       text-overflow: ellipsis;
@@ -75,7 +68,6 @@
       padding-left: 2px;
       font-family: "roboto";
     }
-
     .result_title {
       height: 16px;
       margin-bottom: 0px;
@@ -84,7 +76,6 @@
       text-decoration: underline;
       color: blue;
     }
-
     .result_data {
       height: 19px;
       margin-top: 2px;
@@ -93,13 +84,11 @@
       text-decoration: none;
       color: #565656;
     }
-
     .radio_div {
       float: left;
       text-align: center;
       width: 50%;
     }
-
     .button {
       background-color: #63aba8;
       border: none;
@@ -113,11 +102,9 @@
       cursor: pointer;
       border-radius: 4px;
     }
-
     .button:hover {
       background-color: #4d8583;
     }
-
     .form-radio {
       -webkit-appearance: none;
       -moz-appearance: none;
@@ -135,7 +122,6 @@
       margin-right: 7px;
       outline: none;
     }
-
     .form-radio:checked::before {
       position: absolute;
       font: 13px/1 'Open Sans', sans-serif;
@@ -145,11 +131,9 @@
       color: white;
       transform: rotate(40deg);
     }
-
     .form-radio:hover {
       background-color: #f7f7f7;
     }
-
     .form-radio:checked {
       background-color: #63aba8;
     }
@@ -220,7 +204,7 @@
   <!-- Sets up the radio buttons -->
   <div class="row main_divs">
     <div class="radio_div">
-      <input type="radio" name="radio" value="left" id="radio-left" class="form-radio" checked>
+      <input type="radio" name="radio" value="left" id="radio-left" class="form-radio">
     </div>
 
     <div class="radio_div">
@@ -232,7 +216,7 @@
   <!-- Sets up the submit button -->
   <div class="main_divs">
     <div style="text-align: center">
-      <input type="button" class="button" onclick="nextQuery()" value="submit" id="submit_button">
+      <input type="button" class="button" onclick="nextQuery()" value="submit" id="submitButton">
     </div>
   </div>
 
