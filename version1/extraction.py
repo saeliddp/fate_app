@@ -2,18 +2,18 @@ from classes.snippet import *
 import pickle
 
 # splits the DOCUMENT# by the middle '00' to get qid and r
-def splitByDoubleZeros(docNum):
+def splitByDoubleZeros(doc_num):
     # finds index of last zero, not including any trailing zeroes
-    numTrailing = 0
-    tempInd = len(docNum) - 1
-    while docNum[tempInd] == str(0):
-        numTrailing += 1
-        tempInd -= 1
+    num_trailing = 0
+    temp_ind = len(doc_num) - 1
+    while doc_num[temp_ind] == str(0):
+        num_trailing += 1
+        temp_ind -= 1
     
-    lastZeroInd = docNum[:len(docNum) - numTrailing].rindex('0')
+    last_zero_ind = doc_num[:len(doc_num) - num_trailing].rindex('0')
     
     # [qid, r]
-    return [docNum[:lastZeroInd - 1], docNum[lastZeroInd + 1:]]
+    return [doc_num[:last_zero_ind - 1], doc_num[last_zero_ind + 1:]]
     
 
 # finds the index of a Snippet with the given original rank in a list of Snippets
@@ -38,8 +38,8 @@ returns snippet data in the format:
 for each qid, snippet1 corresponds to the first snippet in the reranked list
 """
 # query 82 is nonexistent
-def extractFromFile(fileName, numSnippets):
-    file = open("./version1/txtdata/version1/" + fileName, "r")
+def extractFromFile(file_name, num_snippets):
+    file = open("./version1/txtdata/version1/" + file_name, "r")
     lines = file.readlines()
     file.close()
     
@@ -52,39 +52,39 @@ def extractFromFile(fileName, numSnippets):
     # inspect a certain number
     
     # the number of snippets added to the current qid in results
-    snippetsAdded = 0
-    currQid = -1
+    snippets_added = 0
+    curr_qid = -1
     for line in lines:
         tokens = line.split(' ')
-        qAndR = splitByDoubleZeros(tokens[2])
-        qid = int(qAndR[0])
+        q_and_r = splitByDoubleZeros(tokens[2])
+        qid = int(q_and_r[0])
         
         # once a new qid is reached, set currQid equal to it,
         # set snippetsAdded equal to zero, and add an empty list at
         # results[currQid]
-        if currQid != qid:
-            currQid = qid
-            snippetsAdded = 0
-            results[currQid] = []
+        if curr_qid != qid:
+            curr_qid = qid
+            snippets_added = 0
+            results[curr_qid] = []
            
-        if snippetsAdded < numSnippets:
-            ogRank = int(qAndR[1])
-            newRank = int(tokens[3]) # corresponds to RANK
+        if snippets_added < num_snippets:
+            og_rank = int(q_and_r[1])
+            new_rank = int(tokens[3]) # corresponds to RANK
             
             query_snippet = query_snippet_list[qid - 1]
             snippet_list = query_snippet.snippetList            
-            sid = getIndexOf(ogRank, snippet_list)
-            currSnippet = snippet_list[sid]
+            sid = getIndexOf(og_rank, snippet_list)
+            curr_snippet = snippet_list[sid]
             
-            if ogRank != int(currSnippet.get_rank()):
+            if og_rank != int(curr_snippet.get_rank()):
                 print("Current Snippet's original rank is unequal to the 'r' field in the .txt file.")
                 
             # [query_name, title, url, description]
             # replaces double quotes with single quotes to avoid messing up JSON
-            results[qid].append([query_snippet.query.replace('"', "'"), currSnippet.get_title().replace('"', "'"), 
-                                currSnippet.get_url().replace('"', "'"), currSnippet.get_desc().replace('"', "'")])
+            results[qid].append([query_snippet.query.replace('"', "'"), curr_snippet.get_title().replace('"', "'"), 
+                                curr_snippet.get_url().replace('"', "'"), curr_snippet.get_desc().replace('"', "'")])
                                 
-            snippetsAdded += 1
+            snippets_added += 1
             
     
     return results

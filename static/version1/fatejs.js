@@ -17,8 +17,9 @@ var unseenQids = [];
 var numQidsSeen = 0;
 // the qid we are currently testing
 var currQid = -1;
-var secondsRemaining = Math.round((MS_PER_CHOICE - 1000) / 10);
+var secondsRemaining = Math.round((MS_PER_CHOICE - 1000) / 1000);
 var timer = setInterval(updateSeconds, 1000);
+var queryTimeout = setTimeout(nextQuery, MS_PER_CHOICE);
 
 // see uploadData()
 var firstRankList = null;
@@ -80,6 +81,8 @@ function uploadData(firstJSON, secondJSON) {
 // selects and displays the next or a random query along with corresponding search 
 // result titles and snippets
 function nextQuery() {
+	clearTimeout(queryTimeout);
+	clearInterval(timer);
 	if (numQidsSeen < MAX_NUM_QIDS) {
 		var snipData = firstRankList[currQid];
 		document.getElementById("qstring").innerHTML = "Query: " + snipData[0][0];
@@ -94,15 +97,18 @@ function nextQuery() {
 			document.getElementById(secondTitleIDs[i]).innerHTML = snipData[i][1];
 			document.getElementById(secondSnippetIDs[i]).innerHTML = snipData[i][3];
 		}
+		
 		numQidsSeen++;
 		//updateNextQid();
 		updateRandomQid();
-		setTimeout(nextQuery, MS_PER_CHOICE);
-		secondsRemaining = Math.round((MS_PER_CHOICE - 1000) / 10);
-		clearInterval(timer);
+		
+		queryTimeout = setTimeout(nextQuery, MS_PER_CHOICE);
+		secondsRemaining = Math.round((MS_PER_CHOICE - 1000) / 1000);
 		timer = setInterval(updateSeconds, 1000);
 	} else {
 		document.getElementById("qstring").innerHTML = "Survey Completed";
+		secondsRemaining = 0;
+		
 		for (i = 0; i < firstTitleIDs.length; i++) {
 			document.getElementById(firstTitleIDs[i]).innerHTML = "";
 			document.getElementById(secondTitleIDs[i]).innerHTML = "";
@@ -110,6 +116,7 @@ function nextQuery() {
 			document.getElementById(secondSnippetIDs[i]).innerHTML = "";
 		}
 	}
+	updateSeconds();
 }
 
 function updateSeconds() {

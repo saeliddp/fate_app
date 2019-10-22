@@ -81,6 +81,8 @@ function uploadData(firstJSON, secondJSON) {
 // selects and displays the next or a random query along with corresponding search 
 // result titles and snippets
 function nextQuery() {
+	clearTimeout(queryTimeout);
+	clearInterval(timer);
 	if (numQidsSeen < MAX_NUM_QIDS) {
 		var snipData = firstRankList[currQid];
 		document.getElementById("qstring").innerHTML = "Query: " + snipData[0][0];
@@ -95,21 +97,18 @@ function nextQuery() {
 			document.getElementById(secondTitleIDs[i]).innerHTML = snipData[i][1];
 			document.getElementById(secondSnippetIDs[i]).innerHTML = snipData[i][3];
 		}
+		
 		numQidsSeen++;
 		//updateNextQid();
 		updateRandomQid();
 		
-		clearTimeout(queryTimeout);
 		queryTimeout = setTimeout(nextQuery, MS_PER_CHOICE);
 		secondsRemaining = Math.round((MS_PER_CHOICE - 1000) / 1000);
-		clearInterval(timer);
-		updateSeconds();
 		timer = setInterval(updateSeconds, 1000);
 	} else {
 		document.getElementById("qstring").innerHTML = "Survey Completed";
-		clearInterval(timer);
 		secondsRemaining = 0;
-		updateSeconds();
+		
 		for (i = 0; i < firstTitleIDs.length; i++) {
 			document.getElementById(firstTitleIDs[i]).innerHTML = "";
 			document.getElementById(secondTitleIDs[i]).innerHTML = "";
@@ -117,6 +116,7 @@ function nextQuery() {
 			document.getElementById(secondSnippetIDs[i]).innerHTML = "";
 		}
 	}
+	updateSeconds();
 }
 
 function updateSeconds() {
