@@ -16,17 +16,21 @@ def splitByDoubleZeros(doc_num):
     return [doc_num[:last_zero_ind - 1], doc_num[last_zero_ind + 1:]]
     
 
-# finds the index of a Snippet with the given original rank in a list of Snippets
-# might be improved upon with binary search if the snippet_list is sorted by original rank
-# returns -1 if the desired Snippet is not found
-def getIndexOf(rank, snippet_list):
-    ind = 0
-    for snip in snippet_list:
-        if (int(snip.get_rank()) == rank):
-            return ind
-        ind += 1
-    
-    return -1
+# finds and returns the Snippet with the given original rank
+def binarySnippetSearch(low_index, high_index, og_rank, snippet_list):
+    median = int((low_index + high_index) / 2)
+    median_rank = int(snippet_list[median].get_rank())
+    #print("low: " + str(low_index) + " high: " + str(high_index) + " high rank: " + snippet_list[high_index].get_rank())
+    if median_rank == og_rank:
+        return snippet_list[median]
+    elif low_index == high_index:
+        return None
+    elif low_index == high_index - 1:
+        return binarySnippetSearch(high_index, high_index, og_rank, snippet_list)
+    elif median_rank < og_rank:
+        return binarySnippetSearch(median, high_index, og_rank, snippet_list)
+    else:
+        return binarySnippetSearch(low_index, median, og_rank, snippet_list)
 
 """
 returns snippet data in the format:
@@ -73,8 +77,7 @@ def extractFromFile(file_name, num_snippets):
             
             query_snippet = query_snippet_list[qid - 1]
             snippet_list = query_snippet.snippetList            
-            sid = getIndexOf(og_rank, snippet_list)
-            curr_snippet = snippet_list[sid]
+            curr_snippet = binarySnippetSearch(0, len(snippet_list) - 1, og_rank, snippet_list)
             
             if og_rank != int(curr_snippet.get_rank()):
                 print("Current Snippet's original rank is unequal to the 'r' field in the .txt file.")
